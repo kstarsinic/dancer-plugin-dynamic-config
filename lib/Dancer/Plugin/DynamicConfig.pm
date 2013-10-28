@@ -106,6 +106,8 @@ register_plugin;
 
 __END__
 
+=pod
+
 =head1 NAME
 
 Dancer::Plugin::DynamicConfig
@@ -203,4 +205,6 @@ This software is copyright (c) 2013 by Shutterstock, Inc.
 =head1 SEE ALSO
 
 L<Dancer>, L<Dancer::Plugin>, L<JSON::XS>, L<Time::HiRes>
+
+=cut
 
