@@ -1,0 +1,24 @@
+runtime: perl516
+
+prove: |
+  if [[ -n "${ROCK_ARGS}" ]]; then
+    TEST_AUTHOR=1 exec prove ${PERL_TEST_INC} -r -l -v ${ROCK_ARGS}
+  else
+    TEST_AUTHOR=1 exec prove ${PERL_TEST_INC} -r -l -v t
+  fi
+
+test: |
+  if [[ -n "${ROCK_ARGS}" ]]; then
+    exec prove -l ${PERL_TEST_INC} t/unit/*_${ROCK_ARGS}.t
+  else
+    exec prove -l -r ${PERL_TEST_INC} t/unit
+  fi
+
+env:
+  PERL_CARTON_MIRROR: "http://cpan.shuttercorp.net"
+  PERL_TEST_INC: "-It/unit/lib"
+
+realclean: |
+  rock clean
+  rm -f carton.lock
+
