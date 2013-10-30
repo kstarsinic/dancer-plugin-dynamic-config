@@ -8,11 +8,11 @@ find( sub { push @tests, $File::Find::name if /\.t$/ }, 't/');
 
 WriteMakefile(
     NAME                => 'Dancer::Plugin::DynamicConfig',
-    AUTHOR              => q{Kurt Starsinic <kstarsinic@shutterstock.com>},
+    AUTHOR              => q{Kurt Starsinic <kstarsinic@gmail.com>},
     ABSTRACT            => 'Dancer plugin for reading dynamically-updated configuration files',
     VERSION_FROM        => 'lib/Dancer/Plugin/DynamicConfig.pm',
     ($ExtUtils::MakeMaker::VERSION >= 6.3002
-     ? ('LICENSE'=> 'Proprietary')
+     ? ('LICENSE'=> 'perl')
      : ()),
     PL_FILES            => {},
     BUILD_REQUIRES => {
@@ -29,6 +29,13 @@ WriteMakefile(
       'Time::HiRes'           => 0,
       'Try::Tiny'             => 0,
       'YAML'                  => 0,
+    },
+    META_MERGE => {
+      resources => {
+        bugtracker  => 'https://github.com/kstarsinic/dancer-plugin-dynamic-config/issues',
+        homepage    => 'https://github.com/kstarsinic/dancer-plugin-dynamic-config',
+        repository  => 'git://github.com/kstarsinic/dancer-plugin-dynamic-config.git',
+      },
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Dancer-*' },

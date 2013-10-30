@@ -2,9 +2,10 @@ config.yml
 etc/example.json
 etc/scratch.json
 lib/Dancer/Plugin/DynamicConfig.pm
+Changes
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
-README.md
+README.pod
 t/unit/lib/Dancer/Plugin/DynamicConfig/basic.t
 t/unit/lib/Test/ValCaps.pm

@@ -10,7 +10,7 @@ use JSON::XS qw(decode_json);
 use Time::HiRes qw(stat);       # Get subsecond resolution on stat() mtime
 use Try::Tiny;
 
-our $VERSION = '0.03';
+our $VERSION = '0.06';
 
 my @file_types = ({
   type => 'json',
@@ -196,11 +196,16 @@ been a second update.
 
 =head1 AUTHOR
 
-Kurt Starsinic <kstarsinic@shutterstock.com>
+Kurt Starsinic <kstarsinic@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Shutterstock, Inc.
+This software is copyright (c) 2013 by Kurt Starsinic. It was originally
+authored at and for Shutterstock, Inc., which has graciously allowed this
+code to be made publicly available.
+
+This module is free software; you can redistribute and/or modify it under the
+same terms as perl 5.18.1.
 
 =head1 SEE ALSO
 

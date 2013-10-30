@@ -6,6 +6,7 @@ use lib 't/unit/lib';
 use Dancer::Test;
 use Encode qw(decode);
 use File::Temp;
+use IO::File;
 use Test::Most;
 use Time::HiRes qw(stat sleep);
 
@@ -62,11 +63,10 @@ sub update_dynamic_config {
 # we pick up on changes to the file without having to explicitly reinitialize things
 {
   my $path = path_for('scratch_valcaps', 1);
-  open my $fh, '>', $path;
-  write_file($fh, '{ "a": 1 }');
+  write_file($path, '{ "a": 1 }');
   cmp_deeply(dynamic_config('scratch_valcaps'), { a => 1 }, 'scratch file');
 
-  write_file($fh, '{ "b": 2 }');
+  write_file($path, '{ "b": 2 }');
   cmp_deeply(dynamic_config('scratch_valcaps'), { b => 2 }, 'scratch file after rewrite');
 }
 
@@ -74,7 +74,7 @@ sub update_dynamic_config {
   # Add a test file to our dynamic config that we can scribble on:
   my $fh = File::Temp->new(SUFFIX => '.json');
   my $path = $fh->filename;
-  write_file($fh, '{}');
+  write_file($path, '{}');
 
   update_dynamic_config(config_test => $path);
   cmp_deeply(dynamic_config('config_test'), {}, 'sanity: initial config_test as expected');
@@ -82,7 +82,7 @@ sub update_dynamic_config {
   # we're going to change the file contents on disk, but want to keep the mtime of the file just as
   # it was when we initially created it. So here's a song and dance, and a sanity test to show we got style.
   my $old_mtime = ($fh->stat)[9];
-  write_file($fh, '{"a": 1}');
+  write_file($path, '{"a": 1}');
   utime $old_mtime, $old_mtime, $path;
   cmp_deeply(dynamic_config('config_test'), {}, "no change to mtime: we don't pick up new contents");
 
@@ -97,7 +97,7 @@ sub update_dynamic_config {
   my $fh = File::Temp->new(SUFFIX => '.json');
   my $path = $fh->filename;
   my $japanese_text = "最もお得な月間または年間購入プランをご利用ください。";
-  write_file($fh, qq[{"ja":"$japanese_text"}]);
+  write_file($path, qq[{"ja":"$japanese_text"}]);
 
   update_dynamic_config(config_test => $path);
   cmp_deeply(dynamic_config('config_test'), {ja => decode('UTF-8', $japanese_text)}, 'UTF-8');
@@ -108,7 +108,7 @@ sub update_dynamic_config {
   # Add a test file to our dynamic config that we can scribble on:
   my $fh = File::Temp->new(SUFFIX => '.unworldly-promulgation');
   my $path = $fh->filename;
-  write_file($fh, 'test');
+  write_file($path, 'test');
 
   my @warnings;
   local $SIG{__WARN__} = sub { push @warnings, @_ };
@@ -119,8 +119,9 @@ sub update_dynamic_config {
 }
 
 sub write_file {
-  my ($fh, @data) = @_;
-  my $mtime0 = (stat $fh)[9];
+  my ($path, @data) = @_;
+  my $mtime0 = (stat $path)[9];
+  my $fh = IO::File->new($path, '>');
 
   $fh->seek(0, 0);
   $fh->printflush(@data);
