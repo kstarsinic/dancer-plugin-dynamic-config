@@ -7,4 +7,5 @@
 ^cpanfile$
 ^pm_to_blib$
 ^Makefile$
+^MANIFEST\.bak$
 ^MYMETA\.

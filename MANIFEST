@@ -1,8 +1,9 @@
+.gitignore
+Changes
 config.yml
 etc/example.json
 etc/scratch.json
 lib/Dancer/Plugin/DynamicConfig.pm
-Changes
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
