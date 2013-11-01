@@ -7,10 +7,10 @@ use Dancer::ModuleLoader;
 use Dancer::Plugin;
 use Encode qw(encode);
 use JSON::XS qw(decode_json);
-use Time::HiRes qw(stat);       # Get subsecond resolution on stat() mtime
+use Time::HiRes;
 use Try::Tiny;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 my @file_types = ({
   type => 'json',
@@ -40,7 +40,7 @@ register dynamic_config => sub {
   initialize() unless $dynamic_config;
 
   if (my $fileinfo = $dynamic_config->{$file_key}) {
-    my $mtime = (stat $fileinfo->{path})[9];
+    my $mtime = (dc_stat($fileinfo->{path}))[9];
 
     if (not defined $fileinfo->{data} or $mtime > $fileinfo->{mtime}) {
       my $parsed = $fileinfo->{parser}->($fileinfo->{path});
@@ -98,6 +98,16 @@ sub initialize {
   }
 
   return;
+}
+
+sub dc_stat {
+    my ($filething) = @_;
+
+    if (defined &Time::HiRes::stat) {
+        return Time::HiRes::stat($filething);
+    } else {
+        return stat($filething);
+    }
 }
 
 register_plugin;

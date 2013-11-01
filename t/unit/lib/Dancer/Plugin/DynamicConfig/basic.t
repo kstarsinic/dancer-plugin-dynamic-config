@@ -8,7 +8,7 @@ use Encode qw(decode);
 use File::Temp;
 use IO::File;
 use Test::Most;
-use Time::HiRes qw(stat sleep);
+use Time::HiRes;
 
 my $class = 'Dancer::Plugin::DynamicConfig';
 use_ok $class;
@@ -120,7 +120,7 @@ sub update_dynamic_config {
 
 sub write_file {
   my ($path, @data) = @_;
-  my $mtime0 = (stat $path)[9];
+  my $mtime0 = (best_stat($path))[9];
   my $fh = IO::File->new($path, '>');
 
   $fh->seek(0, 0);
@@ -138,9 +138,9 @@ sub write_file {
   # and we would have to have fetched the contents of the file sometime between those two updates.
   my $waited = 0;
   for (1 .. 4) {
-    last if (stat $fh)[9] > $mtime0;
-    utime undef, undef, $fh;
-    sleep .6;
+    last if (best_stat($fh))[9] > $mtime0;
+    utime undef, undef, $path;
+    best_sleep(.6);
     ++$waited;
   }
 
@@ -153,6 +153,26 @@ sub path_for {
   my $data =  Dancer::Config->settings->{plugins}{DynamicConfig}{$tag};
 
   return ref($data) ? $data->{path} : $data;
+}
+
+sub best_stat {
+    my ($filething) = @_;
+
+    if (defined &Time::HiRes::stat) {
+        Time::HiRes::stat($filething);
+    } else {
+        stat($filething);
+    }
+}
+
+sub best_sleep {
+    my ($seconds) = @_;
+
+    if (defined &Time::HiRes::sleep) {
+        Time::HiRes::sleep($seconds);
+    } else {
+        sleep(int($seconds + 1));
+    }
 }
 
 done_testing;
